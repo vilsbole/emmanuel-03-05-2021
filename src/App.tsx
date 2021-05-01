@@ -41,14 +41,12 @@ function App() {
     };
 
     ws.current.onmessage = (message) => {
-      console.log(message);
       const { feed, product_id, bids, asks } = JSON.parse(message.data);
       if (feed !== FEED || product_id !== PAIR) {
         console.log("wrong feed", message.data);
         return;
       }
 
-      console.log("message", asks, bids);
       if (!isEmpty(asks)) dispatch(addAsks(asks));
       if (!isEmpty(bids)) dispatch(addBids(asks));
     };
