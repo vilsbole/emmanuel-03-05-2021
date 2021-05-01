@@ -1,35 +1,19 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import { default as isEmpty } from "ramda/src/isEmpty";
 
-import "./App.css";
+import {
+  reducer,
+  updateAsks,
+  updateBids,
+  selectAsks,
+  selectBids,
+  initialState,
+} from "./store";
 import { Flex, Box, Button } from "./components";
 
 const URL = "wss://www.cryptofacilities.com/ws/v1";
 const FEED = "book_ui_1";
 const PAIR = "PI_XBTUSD";
-
-const initialState = { asks: [], bids: [] };
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "addAsks": {
-      return {
-        bids: state.bids,
-        asks: [...state.asks, ...action.payload],
-      };
-    }
-    case "addBids": {
-      return {
-        asks: state.asks,
-        bids: [...state.bids, ...action.payload],
-      };
-    }
-    default:
-      return state;
-  }
-};
-
-const addAsks = (asks) => ({ type: "addAsks", payload: asks });
-const addBids = (bids) => ({ type: "addBids", payload: bids });
 
 function App() {
   const ws = useRef(null);
@@ -48,8 +32,8 @@ function App() {
         return;
       }
 
-      if (!isEmpty(asks)) dispatch(addAsks(asks));
-      if (!isEmpty(bids)) dispatch(addBids(asks));
+      if (!isEmpty(asks)) dispatch(updateAsks(asks));
+      if (!isEmpty(bids)) dispatch(updateBids(bids));
     };
 
     ws.current.onerror = (err) => {
@@ -101,13 +85,13 @@ function App() {
       <Flex justifyContent="space-around">
         <Flex flexDirection="column">
           <h3>Asks</h3>
-          {state.asks.map((a, i) => (
+          {selectAsks(state).map((a, i) => (
             <div key="i">{`[${a[0]}, ${a[1]}]`}</div>
           ))}
         </Flex>
         <Flex flexDirection="column">
           <h3>Bids</h3>
-          {state.bids.map((a, i) => (
+          {selectBids(state).map((a, i) => (
             <div key="i">{`[${a[0]}, ${a[1]}]`}</div>
           ))}
         </Flex>
