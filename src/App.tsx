@@ -1,7 +1,8 @@
 import React, { useEffect, useReducer, useRef, useState } from "react";
-import "./App.css";
 import { default as isEmpty } from "ramda/src/isEmpty";
-import { Flex, Box, Button } from "rebass";
+
+import "./App.css";
+import { Flex, Box, Button } from "./components";
 
 const URL = "wss://www.cryptofacilities.com/ws/v1";
 const FEED = "book_ui_1";
@@ -87,13 +88,13 @@ function App() {
       <Flex alignItems="center">
         <h1>OrderBook</h1>
         <Box>
-          <Button variant="Outline" onClick={start} mr={2}>
-            Start Feed
+          <Button variant="primary" onClick={start} mr={2}>
+            Start
           </Button>
         </Box>
         <Box>
-          <Button variant="Outline" onClick={pause}>
-            Stop Feed
+          <Button variant="outline" onClick={pause}>
+            Stop
           </Button>
         </Box>
       </Flex>
