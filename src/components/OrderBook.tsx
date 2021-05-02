@@ -1,21 +1,31 @@
 import React from "react";
-import { subtract, pipe, head, last, prop } from "ramda";
+import { subtract, pipe, head, last, prop, isEmpty } from "ramda";
 import { financial } from "../utils";
 
-import { Box, Text } from "./rebass";
+import { Box, Text, Flex } from "./rebass";
 import { default as Table, TableRow, CellHead, CellData } from "./Table";
 
 const COLUMNS = ["price", "size", "total"];
-const COL_WIDTH = "100px";
 
 const OrderBook = ({ bids = [], asks = [] }) => {
   const spread = subtract(
     pipe(last, prop("0"))(asks),
     pipe(head, prop("0"))(bids)
   );
+  const loading = isEmpty(asks) || isEmpty(bids);
   return (
     <Box bg="dark" padding="1em" minHeight="726px" minWidth="312px">
-      {asks && bids && (
+      {loading ? (
+        <Flex
+          height="100%"
+          width="100%"
+          justifyContent="center"
+          alignItems="center"
+          colSpan={COLUMNS.length}
+        >
+          <Text color="inverted">Loading...</Text>
+        </Flex>
+      ) : (
         <Table
           sx={{
             fontFamily: "IBM Plex Mono, monospace",
@@ -25,7 +35,7 @@ const OrderBook = ({ bids = [], asks = [] }) => {
             <CellHead
               key={idx}
               textAlign="right"
-              minWidth={idx !== 0 ? COL_WIDTH : "70px"}
+              minWidth={idx !== 0 ? "100px" : "70px"}
               sx={{
                 textTransform: "uppercase",
                 fontWeight: "normal",

@@ -20,7 +20,7 @@ export const TableRow = ({ children, ...props }) => (
 );
 
 const TableTag = ({ children, ...props }) => (
-  <Box as="table" {...props}>
+  <Box as="table" height="100%" {...props}>
     {children}
   </Box>
 );
