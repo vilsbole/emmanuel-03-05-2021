@@ -5,8 +5,8 @@ import {
   reducer,
   updateAsks,
   updateBids,
-  selectAsks,
-  selectBids,
+  selectSortedAsks,
+  selectSortedBids,
   initialState,
 } from "./store";
 import {
@@ -97,7 +97,7 @@ function App() {
               {h}
             </CellHead>
           ))}
-          rows={selectAsks(state).map(([p, s, t]) => (
+          rows={selectSortedAsks(state).map(([p, s, t]) => (
             <>
               <CellData>
                 <Text>{financial(p)}</Text>
@@ -117,7 +117,7 @@ function App() {
               {h}
             </CellHead>
           ))}
-          rows={selectBids(state).map(([p, s, t]) => (
+          rows={selectSortedBids(state).map(([p, s, t]) => (
             <>
               <CellData>
                 <Text>{financial(p)}</Text>

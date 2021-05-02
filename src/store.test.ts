@@ -1,11 +1,12 @@
-import { fAsks, fBids } from "../fixtures";
+import { fAsks, fBids, fStore } from "../fixtures";
 import {
   reducer,
   updateAsks,
   updateBids,
   initialState,
-  selectAsks,
-  selectBids,
+  selectSortedAsks,
+  selectSortedBids,
+  appendTotal,
 } from "./store";
 
 describe("Store", () => {
@@ -16,27 +17,41 @@ describe("Store", () => {
 
   test("updateAsks() appends asks to state", () => {
     const actual = reducer(initialState, updateAsks(fAsks));
-    const expected = { ...initialState, asks: [...fAsks] };
+    const expected = { ...initialState, asks: fStore.asks };
     expect(actual).toEqual(expected);
   });
 
   test("updateBids() appends bids to state", () => {
     const actual = reducer(initialState, updateBids(fBids));
-    const expected = { ...initialState, bids: [...fBids] };
+    const expected = { ...initialState, bids: fStore.bids };
     expect(actual).toEqual(expected);
   });
 
-  test("selectAsks()", () => {
+  test("selectSortedAsks()", () => {
     const state = reducer(initialState, updateAsks(fAsks));
-    const actual = selectAsks(state);
+    const actual = selectSortedAsks(state);
     const expected = fAsks;
     expect(actual).toEqual(expected);
   });
 
-  test("selectBids()", () => {
+  test("selectSortedBids()", () => {
     const state = reducer(initialState, updateBids(fBids));
-    const actual = selectBids(state);
+    const actual = selectSortedBids(state);
     const expected = fBids;
+    expect(actual).toEqual(expected);
+  });
+
+  test("appendTotal()", () => {
+    const actual = appendTotal([
+      [1, 20],
+      [2, 30],
+      [3, 40],
+    ]);
+    const expected = [
+      [1, 20, 90],
+      [2, 30, 70],
+      [3, 40, 40],
+    ];
     expect(actual).toEqual(expected);
   });
 });
