@@ -14,14 +14,14 @@ const OrderBook = ({ bids = [], asks = [] }) => {
   );
   const loading = isEmpty(asks) || isEmpty(bids);
   return (
-    <Box bg="dark" padding="1em" minHeight="726px" minWidth="312px">
+    <Box bg="dark" padding="1em" height="726px" minWidth="312px">
       {loading ? (
         <Flex
           height="100%"
           width="100%"
           justifyContent="center"
-          alignItems="center"
           colSpan={COLUMNS.length}
+          alignItems="center"
         >
           <Text color="inverted">Loading...</Text>
         </Flex>

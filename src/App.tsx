@@ -96,7 +96,6 @@ function App() {
             {PAIR}
           </Text>
         </Flex>
-
         <OrderBook
           bids={selectSortedBids(state)}
           asks={selectSortedAsks(state)}
