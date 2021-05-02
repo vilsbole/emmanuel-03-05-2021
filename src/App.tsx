@@ -1,5 +1,5 @@
-import React, { useEffect, useReducer, useRef, useState } from "react";
-import { default as isEmpty } from "ramda/src/isEmpty";
+import React, { useEffect, useReducer, useRef } from "react";
+import { isEmpty } from "ramda";
 
 import {
   reducer,
@@ -9,7 +9,16 @@ import {
   selectBids,
   initialState,
 } from "./store";
-import { Flex, Box, Button } from "./components";
+import {
+  Table,
+  Flex,
+  Box,
+  Button,
+  Text,
+  CellHead,
+  CellData,
+} from "./components";
+import { financial } from "./helpers";
 
 const URL = "wss://www.cryptofacilities.com/ws/v1";
 const FEED = "book_ui_1";
@@ -66,7 +75,6 @@ function App() {
       })
     );
   };
-
   return (
     <div className="App">
       <Flex alignItems="center">
@@ -83,18 +91,46 @@ function App() {
         </Box>
       </Flex>
       <Flex justifyContent="space-around">
-        <Flex flexDirection="column">
-          <h3>Asks</h3>
-          {selectAsks(state).map((a, i) => (
-            <div key="i">{`[${a[0]}, ${a[1]}]`}</div>
+        <Table
+          columns={["Price", "Size", "Total"].map((h, idx) => (
+            <CellHead key={idx} textAlign="right" minWidth={"77px"}>
+              {h}
+            </CellHead>
           ))}
-        </Flex>
-        <Flex flexDirection="column">
-          <h3>Bids</h3>
-          {selectBids(state).map((a, i) => (
-            <div key="i">{`[${a[0]}, ${a[1]}]`}</div>
+          rows={selectAsks(state).map(([p, s, t]) => (
+            <>
+              <CellData>
+                <Text>{financial(p)}</Text>
+              </CellData>
+              <CellData textAlign={"right"} minWidth={"77px"}>
+                <Text>{financial(s, { fractionDigits: 0 })}</Text>
+              </CellData>
+              <CellData textAlign={"right"} minWidth={"77px"}>
+                <Text>{financial(t, { fractionDigits: 0 })}</Text>
+              </CellData>
+            </>
           ))}
-        </Flex>
+        />
+        <Table
+          columns={["Price", "Size", "Total"].map((h, idx) => (
+            <CellHead key={idx} textAlign="right" minWidth={"77px"}>
+              {h}
+            </CellHead>
+          ))}
+          rows={selectBids(state).map(([p, s, t]) => (
+            <>
+              <CellData>
+                <Text>{financial(p)}</Text>
+              </CellData>
+              <CellData textAlign={"right"} minWidth={"77px"}>
+                <Text>{financial(s, { fractionDigits: 0 })}</Text>
+              </CellData>
+              <CellData textAlign={"right"} minWidth={"77px"}>
+                <Text>{financial(t, { fractionDigits: 0 })}</Text>
+              </CellData>
+            </>
+          ))}
+        />
       </Flex>
     </div>
   );

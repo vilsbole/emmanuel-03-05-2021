@@ -1,1 +1,2 @@
-export { Flex, Box, Button } from "rebass/styled-components";
+export * from "./rebass";
+export { default as Table, CellHead, CellData } from "./table";
