@@ -47,8 +47,8 @@ function App() {
     ws.current.send(
       JSON.stringify({
         event: "unsubscribe",
-        feed: "book_ui_1",
-        product_ids: ["PI_XBTUSD"],
+        feed: FEED,
+        product_ids: [PAIR],
       })
     );
   };
@@ -58,8 +58,8 @@ function App() {
     ws.current.send(
       JSON.stringify({
         event: "subscribe",
-        feed: "book_ui_1",
-        product_ids: ["PI_XBTUSD"],
+        feed: FEED,
+        product_ids: [PAIR],
       })
     );
   };

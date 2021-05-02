@@ -1,13 +1,14 @@
-import React from "react";
 import { subtract, pipe, head, last, prop, isEmpty } from "ramda";
 import { financial } from "../utils";
 
+import type { Order } from "../store";
 import { Box, Text, Flex } from "./rebass";
 import { default as Table, TableRow, CellHead, CellData } from "./Table";
 
 const COLUMNS = ["price", "size", "total"];
 
-const OrderBook = ({ bids = [], asks = [] }) => {
+type Props = { bids: Order[]; asks: Order[] };
+const OrderBook: React.FC<Props> = ({ bids = [], asks = [] }) => {
   const spread = subtract(
     pipe(last, prop("0"))(asks),
     pipe(head, prop("0"))(bids)

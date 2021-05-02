@@ -25,5 +25,3 @@ describe("insertOrder()", () => {
     expect(actual).toEqual(expected);
   });
 });
-
-describe("sortByPrice()", () => {});

@@ -13,12 +13,24 @@ import {
   slice,
   reverse,
 } from "ramda";
-import { insertOrder, sortByPrice } from "./helpers";
-import { createSelector } from "@reduxjs/toolkit";
+import { insertOrder } from "./helpers";
+import { createSelector, AnyAction } from "@reduxjs/toolkit";
+
+interface Store {
+  asks: Record<string, number>;
+  bids: Record<string, number>;
+}
+export type LimitOrder = [number, number];
+export type Order = [string, number, number];
+type AppendTotal = (o: LimitOrder[]) => Order[];
+type SelectSorted = (s: Store) => Order[];
 
 export const initialState = { asks: {}, bids: {} };
 
-export const reducer = (state = initialState, action = { type: "init" }) => {
+export const reducer = (
+  state = initialState,
+  action: AnyAction = { type: "init" }
+) => {
   switch (action.type) {
     case "addAsks": {
       return {
@@ -37,38 +49,54 @@ export const reducer = (state = initialState, action = { type: "init" }) => {
   }
 };
 
-export const updateAsks = (asks) => ({ type: "addAsks", payload: asks });
-export const updateBids = (bids) => ({ type: "addBids", payload: bids });
+export const updateAsks = (asks: LimitOrder[]) => ({
+  type: "addAsks",
+  payload: asks,
+});
+export const updateBids = (bids: LimitOrder[]) => ({
+  type: "addBids",
+  payload: bids,
+});
 
-const selectAsks = ({ asks }) => asks;
-const selectBids = ({ bids }) => bids;
+const selectAsks = ({ asks }: Store) => asks;
+const selectBids = ({ bids }: Store) => bids;
 
 const mapIndexed = addIndex(map);
-export const appendTotal = (list) =>
+
+export const appendTotal: AppendTotal = (orders) =>
+  // @ts-expect-error: ts struggles with ramda
   mapIndexed(([price, size], idx) => {
     return [
       price,
       size,
       pipe(
-        slice(idx, list.length),
+        slice(idx, orders.length),
         reduce((acc, [p, s]) => add(acc, s), 0)
-      )(list),
+      )(orders),
     ];
-  })(list);
+  }, orders);
 
-export const selectSortedAsks = createSelector(
+export const selectSortedAsks: SelectSorted = createSelector(
   [selectAsks],
-  pipe(toPairs, sort(ascend(prop("0"))), take(15), reverse, appendTotal)
+  pipe(
+    toPairs,
+    sort(ascend(prop("0"))),
+    // @ts-expect-error: ts struggles with ramda
+    take(15),
+    reverse,
+    appendTotal
+  )
 );
 
-export const selectSortedBids = createSelector(
+export const selectSortedBids: SelectSorted = createSelector(
   [selectBids],
   pipe(
     toPairs,
     sort(descend(prop("0"))),
+    // @ts-expect-error: ts struggles with ramda
     take(15),
     reverse,
     appendTotal,
-    reverse
+    (l) => reverse<Order>(l)
   )
 );
