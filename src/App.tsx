@@ -10,7 +10,7 @@ import {
   initialState,
 } from "./store";
 import { URL, FEED, PAIR } from "./config";
-import { Flex, Box, Button, OrderBook } from "./components";
+import { Text, Flex, Box, Button, OrderBook } from "./components";
 
 function App() {
   const ws = useRef(null);
@@ -63,28 +63,46 @@ function App() {
       })
     );
   };
+
+  const fail = () => {};
   return (
-    <div className="App">
-      <Flex alignItems="center">
-        <h1>OrderBook</h1>
+    <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
+      <Flex mt="1em" mb="100px" justifyContent="space-between">
         <Box>
-          <Button variant="primary" onClick={start} mr={2}>
-            Start
+          <Button variant="primary" onClick={pause}>
+            Pause
           </Button>
         </Box>
         <Box>
-          <Button variant="outline" onClick={pause}>
-            Stop
+          <Button variant="outline" onClick={start} ml={2}>
+            Restart
+          </Button>
+        </Box>
+        <Box>
+          <Button variant="outline" onClick={fail} ml={2}>
+            Fail
           </Button>
         </Box>
       </Flex>
-      <Flex justifyContent="space-around">
+      <Box>
+        <Flex alignItems="center" mb="0.5em" sx={{ fontVariant: "small-caps" }}>
+          <Text as="h3" mr={"1ch"}>
+            orderbook{" "}
+          </Text>
+          <Text
+            as="span"
+            sx={{ display: "inline-block", textTransform: "lowercase" }}
+          >
+            {PAIR}
+          </Text>
+        </Flex>
+
         <OrderBook
           bids={selectSortedBids(state)}
           asks={selectSortedAsks(state)}
         />
-      </Flex>
-    </div>
+      </Box>
+    </Flex>
   );
 }
 
