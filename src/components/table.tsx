@@ -1,31 +1,30 @@
-import React from "react";
-import { Box } from "rebass";
+import { Box, BoxProps } from "rebass";
 
-export const CellHead: React.FC = ({ children, ...props }) => (
+export const CellHead: React.FC<BoxProps> = ({ children, ...props }) => (
   <Box as="th" {...props}>
     {children}
   </Box>
 );
 
-export const CellData: React.FC = ({ children, ...props }) => (
+export const CellData: React.FC<BoxProps> = ({ children, ...props }) => (
   <Box as="td" {...props}>
     {children}
   </Box>
 );
 
-export const TableRow: React.FC = ({ children, ...props }) => (
+export const TableRow: React.FC<BoxProps> = ({ children, ...props }) => (
   <Box as="tr" {...props}>
     {children}
   </Box>
 );
 
-const TableTag: React.FC = ({ children, ...props }) => (
+const TableTag: React.FC<BoxProps> = ({ children, ...props }) => (
   <Box as="table" height="100%" {...props}>
     {children}
   </Box>
 );
 
-const Table: React.FC<{ columns: string[] }> = ({
+const Table: React.FC<BoxProps & { columns: JSX.Element[] }> = ({
   columns,
   children,
   ...props

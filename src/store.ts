@@ -63,6 +63,16 @@ const selectBids = ({ bids }: Store) => bids;
 
 const mapIndexed = addIndex(map);
 
+export const getSpread = ({
+  asks,
+  bids,
+}: {
+  asks: Order[];
+  bids: Order[];
+}): number =>
+  // @ts-expect-error : ts struggles with ramda
+  subtract(compose(prop("0"), last)(asks) - compose(prop("0"), head)(bids));
+
 export const appendTotal: AppendTotal = (orders) =>
   // @ts-expect-error: ts struggles with ramda
   mapIndexed(([price, size], idx) => {

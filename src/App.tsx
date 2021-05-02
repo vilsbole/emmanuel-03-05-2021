@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer, useRef } from "react";
 import { isEmpty } from "ramda";
 
 import {
@@ -13,7 +13,7 @@ import { URL, FEED, PAIR } from "./config";
 import { Text, Flex, Box, Button, OrderBook } from "./components";
 
 function App() {
-  const ws = useRef(null);
+  const ws = useRef<null | WebSocket>(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
@@ -65,6 +65,7 @@ function App() {
   };
 
   const fail = () => {};
+
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
       <Flex mt="1em" mb="100px" justifyContent="space-between">

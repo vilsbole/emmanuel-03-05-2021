@@ -1,7 +1,8 @@
-import { subtract, pipe, head, last, prop, isEmpty } from "ramda";
+import { isEmpty } from "ramda";
 import { financial } from "../utils";
 
 import type { Order } from "../store";
+import { getSpread } from "../store";
 import { Box, Text, Flex } from "./rebass";
 import { default as Table, TableRow, CellHead, CellData } from "./Table";
 
@@ -9,14 +10,11 @@ const COLUMNS = ["price", "size", "total"];
 
 type Props = { bids: Order[]; asks: Order[] };
 const OrderBook: React.FC<Props> = ({ bids = [], asks = [] }) => {
-  const spread = subtract(
-    pipe(last, prop("0"))(asks),
-    pipe(head, prop("0"))(bids)
-  );
-  const loading = isEmpty(asks) || isEmpty(bids);
+  const isLoading = isEmpty(asks) || isEmpty(bids);
+
   return (
     <Box bg="dark" padding="1em" height="726px" minWidth="312px">
-      {loading ? (
+      {isLoading ? (
         <Flex
           height="100%"
           width="100%"
@@ -66,7 +64,7 @@ const OrderBook: React.FC<Props> = ({ bids = [], asks = [] }) => {
           <TableRow>
             <CellData textAlign="center" colSpan={3} pt="1em" pb="1em">
               <Text fontSize="0.9em" color="discrete">
-                {financial(spread)} Spread
+                {financial(getSpread({ asks, bids }))} Spread
               </Text>
             </CellData>
           </TableRow>
