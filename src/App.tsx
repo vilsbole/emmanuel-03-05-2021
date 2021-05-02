@@ -9,19 +9,15 @@ import {
   selectSortedBids,
   initialState,
 } from "./store";
+import { URL, FEED, PAIR } from "./config";
 import { Flex, Box, Button, OrderBook } from "./components";
-import { financial } from "./helpers";
-
-const URL = "wss://www.cryptofacilities.com/ws/v1";
-const FEED = "book_ui_1";
-const PAIR = "PI_XBTUSD";
 
 function App() {
   const ws = useRef(null);
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    ws.current = new WebSocket(URL);
+    ws.current = new WebSocket(`wss://${URL}`);
     ws.current.onopen = () => {
       console.log("WebSocket Client Connected");
     };

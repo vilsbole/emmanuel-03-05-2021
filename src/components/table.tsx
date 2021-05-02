@@ -19,14 +19,20 @@ export const TableRow = ({ children, ...props }) => (
   </Box>
 );
 
-const Table = ({ columns, children }) => {
+const TableTag = ({ children, ...props }) => (
+  <Box as="table" {...props}>
+    {children}
+  </Box>
+);
+
+const Table = ({ columns, children, ...props }) => {
   return (
-    <table>
+    <TableTag {...props}>
       <thead>
         <tr>{columns.map((c, idx) => c)}</tr>
       </thead>
       <tbody>{children}</tbody>
-    </table>
+    </TableTag>
   );
 };
 
