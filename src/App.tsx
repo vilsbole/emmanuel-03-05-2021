@@ -9,15 +9,7 @@ import {
   selectSortedBids,
   initialState,
 } from "./store";
-import {
-  Table,
-  Flex,
-  Box,
-  Button,
-  Text,
-  CellHead,
-  CellData,
-} from "./components";
+import { Flex, Box, Button, OrderBook } from "./components";
 import { financial } from "./helpers";
 
 const URL = "wss://www.cryptofacilities.com/ws/v1";
@@ -91,45 +83,9 @@ function App() {
         </Box>
       </Flex>
       <Flex justifyContent="space-around">
-        <Table
-          columns={["Price", "Size", "Total"].map((h, idx) => (
-            <CellHead key={idx} textAlign="right" minWidth={"77px"}>
-              {h}
-            </CellHead>
-          ))}
-          rows={selectSortedAsks(state).map(([p, s, t]) => (
-            <>
-              <CellData>
-                <Text>{financial(p)}</Text>
-              </CellData>
-              <CellData textAlign={"right"} minWidth={"77px"}>
-                <Text>{financial(s, { fractionDigits: 0 })}</Text>
-              </CellData>
-              <CellData textAlign={"right"} minWidth={"77px"}>
-                <Text>{financial(t, { fractionDigits: 0 })}</Text>
-              </CellData>
-            </>
-          ))}
-        />
-        <Table
-          columns={["Price", "Size", "Total"].map((h, idx) => (
-            <CellHead key={idx} textAlign="right" minWidth={"77px"}>
-              {h}
-            </CellHead>
-          ))}
-          rows={selectSortedBids(state).map(([p, s, t]) => (
-            <>
-              <CellData>
-                <Text>{financial(p)}</Text>
-              </CellData>
-              <CellData textAlign={"right"} minWidth={"77px"}>
-                <Text>{financial(s, { fractionDigits: 0 })}</Text>
-              </CellData>
-              <CellData textAlign={"right"} minWidth={"77px"}>
-                <Text>{financial(t, { fractionDigits: 0 })}</Text>
-              </CellData>
-            </>
-          ))}
+        <OrderBook
+          bids={selectSortedBids(state)}
+          asks={selectSortedAsks(state)}
         />
       </Flex>
     </div>

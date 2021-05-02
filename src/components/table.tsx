@@ -13,17 +13,19 @@ export const CellData = ({ children, ...props }) => (
   </Box>
 );
 
-const Table = ({ columns, rows }) => {
+export const TableRow = ({ children, ...props }) => (
+  <Box as="tr" {...props}>
+    {children}
+  </Box>
+);
+
+const Table = ({ columns, children }) => {
   return (
     <table>
       <thead>
         <tr>{columns.map((c, idx) => c)}</tr>
       </thead>
-      <tbody>
-        {rows.map((row, idx) => (
-          <tr key={idx}>{row}</tr>
-        ))}
-      </tbody>
+      <tbody>{children}</tbody>
     </table>
   );
 };
