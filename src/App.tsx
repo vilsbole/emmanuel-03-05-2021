@@ -22,9 +22,16 @@ function App() {
     {
       onOpen: () => {
         dispatch(resetState());
+        sendJsonMessage({
+          event: "subscribe",
+          feed: FEED,
+          product_ids: [PAIR],
+        });
       },
       onClose: () => console.debug("ws closed"),
       onError: (e) => console.debug("ws error", e),
+      retryOnError: true,
+      reconnectAttempts: 5,
     }
   );
 
@@ -39,63 +46,25 @@ function App() {
   // Update state when we receive a valid message.
   useEffect(() => {
     if (!lastJsonMessage) return;
-    const { feed, product_id, bids, asks } = lastJsonMessage;
-    if (feed !== FEED || product_id !== PAIR) {
-      return;
-    }
+    const { bids, asks, feed, product_id } = lastJsonMessage;
+    if (feed !== FEED || product_id !== PAIR) return;
     if (!isEmpty(asks)) dispatch(updateAsks(asks));
     if (!isEmpty(bids)) dispatch(updateBids(bids));
   }, [lastJsonMessage]);
 
-  const pause = () => {
-    sendJsonMessage({
-      event: "unsubscribe",
-      feed: FEED,
-      product_ids: [PAIR],
-    });
-  };
-
-  const start = () => {
-    sendJsonMessage({
-      event: "subscribe",
-      feed: FEED,
-      product_ids: [PAIR],
-    });
-  };
-
-  const fail = () => {};
-
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
-      <Flex mt="1em" mb="100px" justifyContent="space-between">
-        <Box>
-          <Button variant="primary" onClick={pause}>
-            Pause
-          </Button>
-        </Box>
-        <Box>
-          <Button variant="outline" onClick={start} ml={2}>
-            Restart
-          </Button>
-        </Box>
-        <Box>
-          <Button variant="outline" onClick={fail} ml={2}>
-            Fail
-          </Button>
-        </Box>
-      </Flex>
       <Box>
         <Flex alignItems="center" mb="0.5em" sx={{ fontVariant: "small-caps" }}>
-          <Text as="h3" mr={"1ch"}>
+          <Text as="h3" mr="1ch">
             orderbook
           </Text>
-          <Text sx={{ textTransform: "lowercase" }}>{PAIR}</Text>
-          <Text justifySelf="flex-end">
-            {connectionStatus}
-            <Dot
-              size="10px"
-              color={connectionStatus === "open" ? "accent" : "warn"}
-            />
+          <Dot
+            size="10px"
+            color={connectionStatus === "open" ? "accent" : "warn"}
+          />
+          <Text sx={{ textTransform: "lowercase" }} ml="2px">
+            {PAIR}
           </Text>
         </Flex>
         <OrderBook
