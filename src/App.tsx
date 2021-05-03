@@ -1,6 +1,7 @@
 import { useEffect, useReducer } from "react";
 import useWebsocket, { ReadyState } from "react-use-websocket";
 import { isEmpty } from "ramda";
+import { useUnmount } from "react-use";
 
 import {
   reducer,
@@ -47,10 +48,10 @@ function App() {
     if (readyState === ReadyState.CLOSED) {
       dispatch(resetState());
     }
-    // return () => {
-    //   getWebSocket()?.close();
-    // };
   }, [readyState, dispatch, getWebSocket]);
+
+  // NOTE: useWebsocket fails to close connection on unmount
+  useUnmount(() => getWebSocket()?.close());
 
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
