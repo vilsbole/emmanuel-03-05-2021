@@ -11,7 +11,6 @@ const COLUMNS = ["price", "size", "total"];
 type Props = { bids: Order[]; asks: Order[] };
 const OrderBook: React.FC<Props> = ({ bids = [], asks = [] }) => {
   const isLoading = isEmpty(asks) || isEmpty(bids);
-  const spread = getSpread({ asks, bids });
   return (
     <Box bg="dark" padding="1em" height="726px" minWidth="312px">
       {isLoading ? (
@@ -64,7 +63,7 @@ const OrderBook: React.FC<Props> = ({ bids = [], asks = [] }) => {
           <TableRow>
             <CellData textAlign="center" colSpan={3} pt="1em" pb="1em">
               <Text fontSize="0.9em" color="discrete">
-                {financial(spread)} Spread
+                {financial(getSpread({ asks, bids }))} Spread
               </Text>
             </CellData>
           </TableRow>

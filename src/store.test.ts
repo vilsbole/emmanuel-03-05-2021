@@ -1,4 +1,4 @@
-import { fAsks, fBids, fAppState } from "../fixtures";
+import { fAsks, fBids, fBidsOrders, fAsksOrders, fAppState } from "../fixtures";
 import {
   reducer,
   updateAsks,
@@ -7,11 +7,12 @@ import {
   selectSortedAsks,
   selectSortedBids,
   appendTotal,
+  getSpread,
 } from "./store";
 
 describe("Store", () => {
-  test("reducer has an initialState", () => {
-    const actual = reducer();
+  test("reducer returns initialState", () => {
+    const actual = reducer(initialState, { type: "foo" });
     expect(actual).toEqual(initialState);
   });
 
@@ -30,14 +31,14 @@ describe("Store", () => {
   test("selectSortedAsks()", () => {
     const state = reducer(initialState, updateAsks(fAsks));
     const actual = selectSortedAsks(state);
-    const expected = fAsks;
+    const expected = fAsksOrders;
     expect(actual).toEqual(expected);
   });
 
   test("selectSortedBids()", () => {
     const state = reducer(initialState, updateBids(fBids));
     const actual = selectSortedBids(state);
-    const expected = fBids;
+    const expected = fBidsOrders;
     expect(actual).toEqual(expected);
   });
 
@@ -52,6 +53,14 @@ describe("Store", () => {
       [2, 30, 70],
       [3, 40, 40],
     ];
+    expect(actual).toEqual(expected);
+  });
+
+  test("getSpread(): caculates spread", () => {
+    const actual = getSpread({ asks: fAsksOrders, bids: fBidsOrders });
+    const expected =
+      Number.parseFloat(fAsksOrders[fAsksOrders.length - 1][0]) -
+      Number.parseFloat(fBidsOrders[0][0]);
     expect(actual).toEqual(expected);
   });
 });

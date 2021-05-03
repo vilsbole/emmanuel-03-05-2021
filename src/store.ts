@@ -75,8 +75,10 @@ export const getSpread = ({
   asks: Order[];
   bids: Order[];
 }): number =>
-  // @ts-expect-error : ts struggles with ramda
-  subtract(compose(prop("0"), last)(asks) - compose(prop("0"), head)(bids));
+  subtract(
+    compose(Number.parseFloat, head, last)(asks),
+    compose(Number.parseFloat, head, head)(bids)
+  );
 
 export const appendTotal: AppendTotal = (orders) =>
   // @ts-expect-error: ts struggles with ramda

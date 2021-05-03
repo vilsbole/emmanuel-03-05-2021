@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import useWebsocket, { ReadyState } from "react-use-websocket";
 import { isEmpty } from "ramda";
 
@@ -12,28 +12,28 @@ import {
   initialState,
 } from "./store";
 import { WS_URL, FEED, PAIR } from "./config";
-import { Text, Flex, Dot, Box, Button, OrderBook } from "./components";
+import { Text, Flex, Dot, Box, OrderBook } from "./components";
 
 function App() {
   const [state, dispatch] = useReducer<typeof reducer>(reducer, initialState);
 
-  const { sendJsonMessage, lastJsonMessage, readyState } = useWebsocket(
-    WS_URL,
-    {
-      onOpen: () => {
-        dispatch(resetState());
-        sendJsonMessage({
-          event: "subscribe",
-          feed: FEED,
-          product_ids: [PAIR],
-        });
-      },
-      onClose: () => console.debug("ws closed"),
-      onError: (e) => console.debug("ws error", e),
-      retryOnError: true,
-      reconnectAttempts: 5,
-    }
-  );
+  const { sendJsonMessage, readyState } = useWebsocket(WS_URL, {
+    onOpen: () => {
+      sendJsonMessage({
+        event: "subscribe",
+        feed: FEED,
+        product_ids: [PAIR],
+      });
+    },
+    onMessage: (message) => {
+      const { bids, asks, feed, product_id } = JSON.parse(message.data);
+      if (feed !== FEED || product_id !== PAIR) return;
+      if (!isEmpty(asks)) dispatch(updateAsks(asks));
+      if (!isEmpty(bids)) dispatch(updateBids(bids));
+    },
+    onClose: () => console.debug("ws closed"),
+    onError: (e) => console.debug("ws error", e),
+  });
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "connecting",
@@ -43,14 +43,11 @@ function App() {
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
 
-  // Update state when we receive a valid message.
   useEffect(() => {
-    if (!lastJsonMessage) return;
-    const { bids, asks, feed, product_id } = lastJsonMessage;
-    if (feed !== FEED || product_id !== PAIR) return;
-    if (!isEmpty(asks)) dispatch(updateAsks(asks));
-    if (!isEmpty(bids)) dispatch(updateBids(bids));
-  }, [lastJsonMessage]);
+    if (readyState === ReadyState.CLOSED) {
+      dispatch(resetState());
+    }
+  }, [readyState, dispatch]);
 
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
