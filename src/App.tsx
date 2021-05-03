@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer } from "react";
 import useWebsocket, { ReadyState } from "react-use-websocket";
 import { isEmpty } from "ramda";
 
@@ -17,7 +17,7 @@ import { Text, Flex, Dot, Box, OrderBook } from "./components";
 function App() {
   const [state, dispatch] = useReducer<typeof reducer>(reducer, initialState);
 
-  const { sendJsonMessage, readyState } = useWebsocket(WS_URL, {
+  const { sendJsonMessage, readyState, getWebSocket } = useWebsocket(WS_URL, {
     onOpen: () => {
       sendJsonMessage({
         event: "subscribe",
@@ -47,7 +47,10 @@ function App() {
     if (readyState === ReadyState.CLOSED) {
       dispatch(resetState());
     }
-  }, [readyState, dispatch]);
+    // return () => {
+    //   getWebSocket()?.close();
+    // };
+  }, [readyState, dispatch, getWebSocket]);
 
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">

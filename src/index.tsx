@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { ThemeProvider } from "styled-components";
+// @ts-expect-error: missing declaration files for package
 import { default as preset } from "@rebass/preset";
 
 import "./index.css";

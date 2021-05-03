@@ -10,4 +10,4 @@ export const financial = (
     Intl.NumberFormat("en", {
       minimumFractionDigits: options.fractionDigits,
     }).format
-  )(value);
+  )(value as string); // NOTE: parseFloat can handle numbers.
