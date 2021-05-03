@@ -1,4 +1,4 @@
-import { fAsks, fBids, fStore } from "../fixtures";
+import { fAsks, fBids, fAppState } from "../fixtures";
 import {
   reducer,
   updateAsks,
@@ -17,13 +17,13 @@ describe("Store", () => {
 
   test("updateAsks() appends asks to state", () => {
     const actual = reducer(initialState, updateAsks(fAsks));
-    const expected = { ...initialState, asks: fStore.asks };
+    const expected = { ...initialState, asks: fAppState.asks };
     expect(actual).toEqual(expected);
   });
 
   test("updateBids() appends bids to state", () => {
     const actual = reducer(initialState, updateBids(fBids));
-    const expected = { ...initialState, bids: fStore.bids };
+    const expected = { ...initialState, bids: fAppState.bids };
     expect(actual).toEqual(expected);
   });
 

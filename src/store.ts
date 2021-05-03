@@ -11,26 +11,27 @@ import {
   map,
   add,
   slice,
+  subtract,
   reverse,
+  compose,
+  last,
+  head,
 } from "ramda";
 import { insertOrder } from "./helpers";
 import { createSelector, AnyAction } from "@reduxjs/toolkit";
 
-interface Store {
+export interface AppState {
   asks: Record<string, number>;
   bids: Record<string, number>;
 }
 export type LimitOrder = [number, number];
 export type Order = [string, number, number];
 type AppendTotal = (o: LimitOrder[]) => Order[];
-type SelectSorted = (s: Store) => Order[];
+type SelectSorted = (s: AppState) => Order[];
 
 export const initialState = { asks: {}, bids: {} };
 
-export const reducer = (
-  state = initialState,
-  action: AnyAction = { type: "init" }
-) => {
+export const reducer = (state: AppState, action: AnyAction) => {
   switch (action.type) {
     case "addAsks": {
       return {
@@ -44,11 +45,15 @@ export const reducer = (
         bids: reduce(insertOrder, state.bids, action.payload),
       };
     }
+    case "reset":
     default:
       return state;
   }
 };
 
+export const resetState = () => ({
+  type: "reset",
+});
 export const updateAsks = (asks: LimitOrder[]) => ({
   type: "addAsks",
   payload: asks,
@@ -58,8 +63,8 @@ export const updateBids = (bids: LimitOrder[]) => ({
   payload: bids,
 });
 
-const selectAsks = ({ asks }: Store) => asks;
-const selectBids = ({ bids }: Store) => bids;
+const selectAsks = ({ asks }: AppState) => asks;
+const selectBids = ({ bids }: AppState) => bids;
 
 const mapIndexed = addIndex(map);
 

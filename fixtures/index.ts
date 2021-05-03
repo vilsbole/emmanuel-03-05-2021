@@ -35,7 +35,7 @@ export const fBids = [
   [57412.5, 64173],
 ];
 
-export const fStore = {
+export const fAppState = {
   asks: {
     "57399.5": 13387,
     "57396.5": 112724,

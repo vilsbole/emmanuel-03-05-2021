@@ -1,67 +1,66 @@
-import { useEffect, useReducer, useRef } from "react";
+import { useEffect, useReducer } from "react";
+import useWebsocket, { ReadyState } from "react-use-websocket";
 import { isEmpty } from "ramda";
 
 import {
   reducer,
   updateAsks,
   updateBids,
+  resetState,
   selectSortedAsks,
   selectSortedBids,
   initialState,
 } from "./store";
-import { URL, FEED, PAIR } from "./config";
-import { Text, Flex, Box, Button, OrderBook } from "./components";
+import { WS_URL, FEED, PAIR } from "./config";
+import { Text, Flex, Dot, Box, Button, OrderBook } from "./components";
 
 function App() {
-  const ws = useRef<null | WebSocket>(null);
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer<typeof reducer>(reducer, initialState);
 
+  const { sendJsonMessage, lastJsonMessage, readyState } = useWebsocket(
+    WS_URL,
+    {
+      onOpen: () => {
+        dispatch(resetState());
+      },
+      onClose: () => console.debug("ws closed"),
+      onError: (e) => console.debug("ws error", e),
+    }
+  );
+
+  const connectionStatus = {
+    [ReadyState.CONNECTING]: "connecting",
+    [ReadyState.OPEN]: "open",
+    [ReadyState.CLOSING]: "closing",
+    [ReadyState.CLOSED]: "closed",
+    [ReadyState.UNINSTANTIATED]: "Uninstantiated",
+  }[readyState];
+
+  // Update state when we receive a valid message.
   useEffect(() => {
-    ws.current = new WebSocket(`wss://${URL}`);
-    ws.current.onopen = () => {
-      console.log("WebSocket Client Connected");
-    };
-
-    ws.current.onmessage = (message) => {
-      const { feed, product_id, bids, asks } = JSON.parse(message.data);
-      if (feed !== FEED || product_id !== PAIR) {
-        console.log("wrong feed", message.data);
-        return;
-      }
-
-      if (!isEmpty(asks)) dispatch(updateAsks(asks));
-      if (!isEmpty(bids)) dispatch(updateBids(bids));
-    };
-
-    ws.current.onerror = (err) => {
-      console.log("on error", err);
-    };
-
-    return () => {
-      ws.current.close();
-    };
-  }, []);
+    if (!lastJsonMessage) return;
+    const { feed, product_id, bids, asks } = lastJsonMessage;
+    if (feed !== FEED || product_id !== PAIR) {
+      return;
+    }
+    if (!isEmpty(asks)) dispatch(updateAsks(asks));
+    if (!isEmpty(bids)) dispatch(updateBids(bids));
+  }, [lastJsonMessage]);
 
   const pause = () => {
-    console.debug("Pause feed");
-    ws.current.send(
-      JSON.stringify({
-        event: "unsubscribe",
-        feed: FEED,
-        product_ids: [PAIR],
-      })
-    );
+    sendJsonMessage({
+      event: "unsubscribe",
+      feed: FEED,
+      product_ids: [PAIR],
+    });
   };
 
   const start = () => {
-    console.debug("Starty feed");
-    ws.current.send(
-      JSON.stringify({
-        event: "subscribe",
-        feed: FEED,
-        product_ids: [PAIR],
-      })
-    );
+    sendJsonMessage({
+      event: "subscribe",
+      feed: FEED,
+      product_ids: [PAIR],
+    });
   };
 
   const fail = () => {};
@@ -88,13 +87,15 @@ function App() {
       <Box>
         <Flex alignItems="center" mb="0.5em" sx={{ fontVariant: "small-caps" }}>
           <Text as="h3" mr={"1ch"}>
-            orderbook{" "}
+            orderbook
           </Text>
-          <Text
-            as="span"
-            sx={{ display: "inline-block", textTransform: "lowercase" }}
-          >
-            {PAIR}
+          <Text sx={{ textTransform: "lowercase" }}>{PAIR}</Text>
+          <Text justifySelf="flex-end">
+            {connectionStatus}
+            <Dot
+              size="10px"
+              color={connectionStatus === "open" ? "accent" : "warn"}
+            />
           </Text>
         </Flex>
         <OrderBook
