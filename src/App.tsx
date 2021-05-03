@@ -43,7 +43,7 @@ function App() {
   }[readyState];
 
   return (
-    <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
+    <Flex height="100%" flexDirection="column" alignItems="center" pt="15%">
       <Box>
         <Flex alignItems="center" mb="0.5em" sx={{ fontVariant: "small-caps" }}>
           <Text as="h3" mr="1ch">
