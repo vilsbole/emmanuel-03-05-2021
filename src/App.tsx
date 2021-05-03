@@ -1,13 +1,11 @@
-import { useEffect, useReducer } from "react";
+import { useReducer } from "react";
 import useWebsocket, { ReadyState } from "react-use-websocket";
 import { isEmpty } from "ramda";
-import { useUnmount } from "react-use";
 
 import {
   reducer,
   updateAsks,
   updateBids,
-  resetState,
   selectSortedAsks,
   selectSortedBids,
   initialState,
@@ -18,7 +16,7 @@ import { Text, Flex, Dot, Box, OrderBook } from "./components";
 function App() {
   const [state, dispatch] = useReducer<typeof reducer>(reducer, initialState);
 
-  const { sendJsonMessage, readyState, getWebSocket } = useWebsocket(WS_URL, {
+  const { sendJsonMessage, readyState } = useWebsocket(WS_URL, {
     onOpen: () => {
       sendJsonMessage({
         event: "subscribe",
@@ -43,15 +41,6 @@ function App() {
     [ReadyState.CLOSED]: "closed",
     [ReadyState.UNINSTANTIATED]: "Uninstantiated",
   }[readyState];
-
-  useEffect(() => {
-    if (readyState === ReadyState.CLOSED) {
-      dispatch(resetState());
-    }
-  }, [readyState, dispatch, getWebSocket]);
-
-  // NOTE: useWebsocket fails to close connection on unmount
-  useUnmount(() => getWebSocket()?.close());
 
   return (
     <Flex height="100%" flexDirection="column" alignItems="center" mt="20%">
